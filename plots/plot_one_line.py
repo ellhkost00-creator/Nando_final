@@ -21,7 +21,7 @@ OUT_DIR     = str(config.PLOTS_DIR / "selected_lines_loading")
 
 # Γραμμές που θες να γίνουν plot
 TARGET_LINES = [
-    "mv_f0_lv245_f0_l0"
+    "mv_f0_lv603_f0_l1_ls"
     
 ]
 

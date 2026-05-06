@@ -500,14 +500,16 @@ def run_daily(driver: DSSDriver):
     txs_name = [x for x in driver.dss_circuit.Transformers.AllNames if "mv_f0_lv_" in x]
 
     # Allocate output DataFrames
-    Vdata = pd.DataFrame(index=range(48), columns=all_voltage_nodes)
+    import os as _os
+    _npts = int(_os.environ.get("NANDO_VALIDATION_STEPS", "48"))
+    Vdata = pd.DataFrame(index=range(_npts), columns=all_voltage_nodes)
     Idata = pd.DataFrame(
-        index=range(48),
+        index=range(_npts),
         columns=[driver.gis_data["MV_lines"].loc[x, "DSSNAME"] for x in driver.gis_data["MV_lines"].index]
     )
     sdata_txs_list = []
 
-    for it in tqdm(range(48), desc="Solving balanced timeseries (48 steps)"):
+    for it in tqdm(range(_npts), desc=f"Solving balanced timeseries ({_npts} steps)"):
         driver.dss_solution.Solve()
 
         # Voltages – all phase nodes
@@ -684,10 +686,12 @@ if __name__ == "__main__":
     print(f"[OK] Saved all buses (clean) → {out_buses.name}  shape={Vdata_clean.shape}")
 
     # ── 5. OUTPUT 2: All lines loading [%] ────────────────────────────────────
+    import os as _os_main
+    _npts_main = int(_os_main.environ.get("NANDO_VALIDATION_STEPS", "48"))
     out_lines = str(config.EXCELS_DIR / "all_lines_loading_percent.csv")
     loading_pct = export_all_line_loading_csv(
         out_csv=out_lines,
-        npts=48,
+        npts=_npts_main,
         stepsize_minutes=config.TIME_RES_MIN,
     )
     print(f"[OK] Saved all lines loading → all_lines_loading_percent.csv  shape={loading_pct.shape}")

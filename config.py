@@ -4,6 +4,7 @@ config.py  –  Central configuration for the OpenDSS → pandapower pipeline.
 Edit only this file to switch networks or change top-level paths.
 All other scripts import from here instead of using hardcoded strings.
 """
+import os
 from pathlib import Path
 
 # ─── PROJECT ROOT (resolved relative to this file) ────────────────────────────
@@ -11,7 +12,8 @@ PROJECT_ROOT = Path(__file__).parent.resolve()
 
 # ─── NETWORK SELECTION ────────────────────────────────────────────────────────
 # Options: "1"=Rural_SMR8  "2"=Rural_KLO14  "3"=Urban_HPK11  "4"=Urban_CRE21
-NETWORK_OPTION = "4"
+# Can be overridden via the NANDO_NETWORK environment variable (set by the web backend).
+NETWORK_OPTION = os.environ.get("NANDO_NETWORK", "4")
 NET_DIR_NAMES = {
     "1": "net_1_Rural_SMR8",
     "2": "net_2_Rural_KLO14",
@@ -19,7 +21,7 @@ NET_DIR_NAMES = {
     "4": "net_4_Urban_CRE21",
 }
 _NET_SUBDIR = NET_DIR_NAMES[NETWORK_OPTION]
-SELECTED_DAY   = 15    # 0 = random (seeded), 1..365 = fixed day of year
+SELECTED_DAY   = int(os.environ.get("NANDO_SELECTED_DAY", "15"))  # 1..365 fixed day, 0 = random
 SEED           = 100
 TIME_RES_MIN   = 30    # minutes per timestep (48 steps = 1 day at 30-min resolution)
 

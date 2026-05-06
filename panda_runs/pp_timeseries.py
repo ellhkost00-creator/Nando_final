@@ -460,7 +460,9 @@ add_regulator_controllers_pp21411(
     side="lv"
 )
 
-time_steps = list(range(48))  # 30min
+import os as _os
+_npts = int(_os.environ.get("NANDO_VALIDATION_STEPS", "48"))
+time_steps = list(range(_npts))  # 30min; configurable via NANDO_VALIDATION_STEPS
 
 prof_caps = add_cap_time_schedule_by_name(
     net,
@@ -474,6 +476,6 @@ from pandapower.plotting import simple_plotly
 
 
 # --- run timeseries ---
-run_ts(net, npts=48, out_dir=str(config.RESULTS_DIR))
+run_ts(net, npts=_npts, out_dir=str(config.RESULTS_DIR))
 
 

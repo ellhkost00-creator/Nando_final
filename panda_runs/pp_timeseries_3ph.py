@@ -562,9 +562,12 @@ df_loads = add_asymmetric_loads_from_dss(net, loads_path, shapes)
 
 SCALE_LOADS = 1.0
 
+import os as _os
+_npts = int(_os.environ.get("NANDO_VALIDATION_STEPS", "48"))
+
 # --- build phase profiles ---
 p_a_df, p_b_df, p_c_df, q_a_df, q_b_df, q_c_df = build_phase_profiles_for_asymmetric_loads(
-    df_loads, shapes, expected_npts=48
+    df_loads, shapes, expected_npts=_npts
 )
 
 for df in [p_a_df, p_b_df, p_c_df, q_a_df, q_b_df, q_c_df]:
@@ -583,7 +586,7 @@ add_regulator_controllers_pp21411(
 )
 
 # --- capacitor schedule ---
-time_steps = list(range(48))
+time_steps = list(range(_npts))  # configurable via NANDO_VALIDATION_STEPS
 prof_caps = add_cap_time_schedule_by_name(
     net,
     time_steps=time_steps,
@@ -596,6 +599,6 @@ prof_caps = add_cap_time_schedule_by_name(
 
 run_ts_3ph_manual(
    net,
-    npts=48,
+    npts=_npts,
     out_dir=str(config.RESULTS_DIR)
 )

@@ -40,7 +40,8 @@ except ModuleNotFoundError:
         "Install via: pip install dss_python==0.12.1"
     )
 
-NPTS = 48
+import os as _os
+NPTS = int(_os.environ.get("NANDO_VALIDATION_STEPS", "48"))
 _PHASE_IDX = {1: 0, 2: 1, 3: 2}   # DSS node number → 0-based phase index (A=0, B=1, C=2)
 _PH_LABELS  = ("a", "b", "c")
 
@@ -154,7 +155,7 @@ def main():
     trafo_arr = {ph: np.full((NPTS, n_trafos), np.nan) for ph in _PH_LABELS}
 
     # ── 5. Timeseries loop ────────────────────────────────────────────────────
-    for t in tqdm(range(NPTS), desc="DSS unbalanced 3ph loading (48 steps)"):
+    for t in tqdm(range(NPTS), desc=f"DSS unbalanced 3ph loading ({NPTS} steps)"):
         sol.Solve()
 
         # Lines
